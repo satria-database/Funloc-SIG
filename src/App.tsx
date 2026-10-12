@@ -98,6 +98,7 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+    document.title = 'FUNLOC SIG';
     loadFunlocData();
   }, [loadFunlocData]);
 
