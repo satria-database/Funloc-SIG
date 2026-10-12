@@ -177,10 +177,10 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               </div>
               <div>
                 <h2 className="text-lg sm:text-xl font-extrabold text-[#242b35] tracking-tight">
-                  Dashboard Master Data SAP Plant Maintenance
+                  Dashboard Functional Location SIG
                 </h2>
                 <p className="text-xs text-[#6e7784] mt-0.5">
-                  PT Semen Indonesia (Persero) Tbk · Integrasi Functional Location (PM) & Cost Center (CO)
+                  Ringkasan Funcloc SIG berdasarkan Cost Center/Mapping
                 </p>
               </div>
             </div>
