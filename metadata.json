@@ -1,6 +1,6 @@
 {
-  "name": "Portal Data Standarisasi Nasional",
-  "description": "Sistem Informasi & Manajemen Data Standarisasi (SNI & ISO) dengan antarmuka presisi skeuomorphic silver chrome retro-modern.",
+  "name": "FUNLOC SIG",
+  "description": "Portal Data Master Functional Location (PM) & Cost Center (CO) PT Semen Indonesia (Persero) Tbk",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
