@@ -1,0 +1,164 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background: radial-gradient(circle at 50% 20%, #eff2f6 0%, #d8dde3 60%, #c4c9cf 100%);
+    color: #38404a;
+  }
+}
+
+/* Custom Skeuomorphic Chrome & Silver Styles matching the reference UI */
+
+/* 1. Realistic, clean drop shadows without artifacting pseudo-elements */
+.skeuo-curved-shadow {
+  position: relative;
+  box-shadow: 
+    0 12px 28px -6px rgba(0, 0, 0, 0.22),
+    0 4px 10px -2px rgba(0, 0, 0, 0.12),
+    0 1px 3px 0 rgba(0, 0, 0, 0.08);
+}
+
+/* 2. Soft clean shadow for smaller cards */
+.skeuo-curved-shadow-sm {
+  position: relative;
+  box-shadow: 
+    0 10px 22px -5px rgba(0, 0, 0, 0.18),
+    0 3px 8px -2px rgba(0, 0, 0, 0.1),
+    0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+/* 3. Glossy main horizontal panel */
+.skeuo-panel-gloss {
+  background: linear-gradient(180deg, #ffffff 0%, #f4f6f8 40%, #e8ebef 75%, #dde1e7 100%);
+  border: 1px solid #b8bfc8;
+  border-top-color: #ffffff;
+  border-bottom-color: #9ea5af;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.9) inset, 0 8px 24px -6px rgba(0, 0, 0, 0.25);
+}
+
+/* 4. Dark slate tabs */
+.skeuo-tab-dark {
+  background: linear-gradient(180deg, #464d58 0%, #303640 45%, #242831 100%);
+  border: 1px solid #1e2229;
+  border-top-color: #5d6674;
+  border-bottom: none;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28), 0 -1px 3px rgba(0, 0, 0, 0.18);
+  color: #ffffff;
+  text-shadow: 0 -1px 1px rgba(0, 0, 0, 0.85);
+}
+
+/* 5. Light silver tabs */
+.skeuo-tab-light {
+  background: linear-gradient(180deg, #ffffff 0%, #f4f6f8 50%, #e3e6ec 100%);
+  border: 1px solid #bcc2cb;
+  border-top-color: #ffffff;
+  border-bottom: none;
+  box-shadow: inset 0 1px 0 #ffffff;
+  color: #555d69;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+/* 6. Inset beveled input fields */
+.skeuo-inset-input {
+  background: linear-gradient(180deg, #cfd4da 0%, #eaedf1 28%, #ffffff 80%);
+  border: 1px solid #9aa1aa;
+  border-top-color: #818892;
+  border-bottom-color: #dbe0e5;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.26), inset 0 1px 1px rgba(0, 0, 0, 0.15), 0 1px 0 rgba(255, 255, 255, 0.95);
+  border-radius: 6px;
+  color: #2e343c;
+}
+.skeuo-inset-input:focus {
+  outline: none;
+  border-color: #636b75;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3), 0 0 0 2px rgba(100, 115, 130, 0.25);
+}
+
+/* 7. Skeuomorphic Glossy Convex Button */
+.skeuo-btn-convex {
+  background: linear-gradient(180deg, #ffffff 0%, #f3f5f7 48%, #e0e4ea 52%, #cfd5dc 100%);
+  border: 1px solid #9ba1aa;
+  border-top-color: #c4cbd3;
+  border-bottom-color: #7b818a;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+  border-radius: 6px;
+  color: #3b424c;
+  font-weight: 600;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+  user-select: none;
+}
+.skeuo-btn-convex:hover {
+  background: linear-gradient(180deg, #ffffff 0%, #fafbfc 48%, #e8ebf0 52%, #d7dde5 100%);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25), inset 0 1px 0 #ffffff;
+}
+.skeuo-btn-convex:active {
+  background: linear-gradient(180deg, #c7cdd5 0%, #d8dde4 48%, #e9edf2 100%);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.32), 0 1px 0 #ffffff;
+  transform: translateY(1px);
+}
+
+/* 8. Metallic Radio Button */
+.skeuo-radio-box {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #c8cdd4 0%, #eef0f3 50%, #ffffff 100%);
+  border: 1px solid #8e959e;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.35), 0 1px 0 rgba(255,255,255,0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.skeuo-radio-box.active .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #3d434c 0%, #1e2228 100%);
+  box-shadow: inset 0 1px 1px rgba(255,255,255,0.3), 0 1px 1px rgba(0,0,0,0.4);
+}
+
+/* 9. Pagination Concave Dots */
+.skeuo-dot-recessed {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #bcc2ca 0%, #e2e5eb 60%, #ffffff 100%);
+  box-shadow: inset 0 2px 3px rgba(0,0,0,0.35), 0 1px 0 rgba(255,255,255,0.9);
+  border: 1px solid #9ea5ae;
+  transition: all 0.2s ease;
+}
+.skeuo-dot-recessed.active {
+  background: radial-gradient(circle at 35% 35%, #59616e 0%, #20242a 75%, #0f1114 100%);
+  border: 2px solid #e5e8ed;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.4), inset 0 1px 2px rgba(255,255,255,0.4);
+  transform: scale(1.15);
+}
+
+/* 10. Circular Gauge Dial Rim */
+.skeuo-dial-rim {
+  background: linear-gradient(180deg, #ffffff 0%, #dee2e7 50%, #bac0c9 100%);
+  border: 1px solid #9aa1aa;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.22), inset 0 1px 1px #ffffff;
+}
+.skeuo-dial-inner {
+  background: linear-gradient(180deg, #d3d7dd 0%, #f1f3f6 40%, #ffffff 100%);
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.25), 0 1px 0 #ffffff;
+}
+
+/* Step Badges */
+.skeuo-step-badge {
+  background: linear-gradient(180deg, #3d434c 0%, #21252c 100%);
+  border: 1px solid #1a1c21;
+  box-shadow: inset 0 1px 1px rgba(255,255,255,0.3), 0 1px 2px rgba(0,0,0,0.35);
+  color: #ffffff;
+  font-weight: 700;
+}
+.skeuo-step-badge-square {
+  background: linear-gradient(180deg, #59606d 0%, #3e444e 50%, #2e333b 100%);
+  border: 1px solid #23272e;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.3), 0 1px 2px rgba(0,0,0,0.25);
+  color: #ffffff;
+}

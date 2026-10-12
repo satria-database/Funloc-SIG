@@ -1,0 +1,6 @@
+{
+  "name": "Portal Data Standarisasi Nasional",
+  "description": "Sistem Informasi & Manajemen Data Standarisasi (SNI & ISO) dengan antarmuka presisi skeuomorphic silver chrome retro-modern.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
