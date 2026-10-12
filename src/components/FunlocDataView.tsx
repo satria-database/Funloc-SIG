@@ -23,6 +23,91 @@ import {
   ChevronDown,
 } from 'lucide-react';
 
+export const OPCO_DATABASE_LIST = [
+  'GHOPO',
+  'SBA LHOKNGA',
+  'SBI CILACAP',
+  'SBI NAROGONG',
+  'SBI TQ',
+  'SG',
+  'SMBR',
+  'SP',
+  'ST',
+  'TLCC',
+];
+
+export const OPCO_LABELS: Record<string, string> = {
+  'GHOPO': 'Group Head of Plant Operation (Gresik & Tuban)',
+  'SBA LHOKNGA': 'Solusi Bangun Andalas (Plant Lhoknga)',
+  'SBI CILACAP': 'Solusi Bangun Indonesia (Plant Cilacap)',
+  'SBI NAROGONG': 'Solusi Bangun Indonesia (Plant Narogong)',
+  'SBI TQ': 'Solusi Bangun Indonesia (Tuban Quarry)',
+  'SG': 'PT Semen Gresik (Pabrik Rembang)',
+  'SMBR': 'PT Semen Baturaja Tbk',
+  'SP': 'PT Semen Padang (Indarung)',
+  'ST': 'PT Semen Tonasa (Pangkep)',
+  'TLCC': 'Thang Long Cement Company (Vietnam)',
+};
+
+export const LINE_PLANT_DATABASE_LIST = [
+  'PLANT NAR 1',
+  'PLANT NAR 2',
+  'PLANT CIL',
+  'PLANT TQ 1',
+  'PLANT TQ 2',
+  'INFRA GHOPO',
+  'TAMBANG GHOPO',
+  'TUBAN 1',
+  'TUBAN 2',
+  'SEMEN GRESIK',
+  'PLTU AB TONASA',
+  'CEMENT PACKING & SHIPPING CIL',
+  'CEMENT PACKING & SHIPPING SG',
+  'UTILITIES & ELECTRICAL NAR 1',
+  'UTILITIES & ELECTRICAL TQ 1',
+  'UTILITIES & ELECTRICAL TQ 2',
+  'UTILITIES & ELECTRICAL TUBAN 1',
+  'UTILITIES & ELECTRICAL TUBAN 2',
+];
+
+export const DEPARTMENT_DATABASE_LIST = [
+  'CLINKER PRODUCTION',
+  'CEMENT PRODUCTION',
+  'CEMENT PACKING & SHIPPING',
+  'TAMBANG',
+  'RAW MEAL PREPARATION',
+  'UTILITIES & ELECTRICAL',
+  'GRINDING PLANT CIGADING',
+  'PLTU AB',
+  'WHRPG KILN',
+  'PACKING PLANT BANJARMASIN',
+  'PACKING PLANT BANYUWANGI',
+  'PACKING PLANT SORONG',
+];
+
+export const TECH_GROUP_DATABASE_LIST = [
+  'KILN FEED',
+  'CEMENT TRANSPORT',
+  'LIMESTONE CRUSHING',
+  'RAW MATERIAL FEEDING',
+  'RAW MATERIAL RECLAIM',
+  'RAW MEAL TRANSPORT',
+  'PULVERIZED COAL FEEDING',
+  'BULK LOADING',
+  'COAL GRINDING',
+  'CLINKER CONVEYING',
+  'COAL HANDLING',
+  'PACKING MACHINE',
+  'SILO CEMENT',
+  'RAW MATERIAL TRANSPORT AND STORAGE',
+  'CLAY CRUSHING AND TRANSPORT',
+  'DERMAGA',
+  'ELECTRICAL',
+  'UTILITIES',
+  'GYPSUM AND ADDITIVES HANDLING',
+  'FUEL OIL HANDLING AND FIRING',
+];
+
 interface FunlocDataViewProps {
   data: FunlocRecord[];
   isLoading: boolean;
@@ -32,6 +117,8 @@ interface FunlocDataViewProps {
   isEditMode?: boolean;
   onToggleEditMode?: () => void;
   initialFunlocFilter?: string;
+  initialOpcoFilter?: string;
+  initialDepartmentFilter?: string;
 }
 
 export const FunlocDataView: React.FC<FunlocDataViewProps> = ({
@@ -42,14 +129,18 @@ export const FunlocDataView: React.FC<FunlocDataViewProps> = ({
   isEditMode,
   onToggleEditMode,
   initialFunlocFilter,
+  initialOpcoFilter,
+  initialDepartmentFilter,
 }) => {
   // Global Search & 5-Category Filter State
   const [searchTerm, setSearchTerm] = useState(''); // Search Engine Global (all 6 columns)
-  const [showSpecificFilters, setShowSpecificFilters] = useState(Boolean(initialFunlocFilter)); // Default hide filter spesifik (klik untuk membuka)
+  const [showSpecificFilters, setShowSpecificFilters] = useState(
+    Boolean(initialFunlocFilter || initialOpcoFilter || initialDepartmentFilter)
+  );
   const [filterFunloc, setFilterFunloc] = useState(initialFunlocFilter || ''); // 1. Functional Location
-  const [filterOpCo, setFilterOpCo] = useState('Semua'); // 2. OpCo
+  const [filterOpCo, setFilterOpCo] = useState(initialOpcoFilter || 'Semua'); // 2. OpCo
   const [filterLinePlant, setFilterLinePlant] = useState('Semua'); // 3. Line Plant
-  const [filterDepartment, setFilterDepartment] = useState('Semua'); // 4. Departmen
+  const [filterDepartment, setFilterDepartment] = useState(initialDepartmentFilter || 'Semua'); // 4. Departmen
   const [filterTechGroup, setFilterTechGroup] = useState('Semua'); // 5. Technical Group
 
   const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -66,10 +157,10 @@ export const FunlocDataView: React.FC<FunlocDataViewProps> = ({
   const [editForm, setEditForm] = useState({
     functional_location: '',
     description: '',
-    opco: 'GHOPO',
-    line_plant: 'INFRA GHOPO',
-    department: 'PACKING PLANT BANJARMASIN',
-    technical_group: 'DERMAGA',
+    opco: 'SBI NAROGONG',
+    line_plant: 'PLANT NAR 1',
+    department: 'RAW MEAL PREPARATION',
+    technical_group: 'RAW MATERIAL FEEDING',
   });
 
   // Server-side / Database Pagination State
@@ -87,18 +178,33 @@ export const FunlocDataView: React.FC<FunlocDataViewProps> = ({
   const [addForm, setAddForm] = useState({
     functional_location: '',
     description: '',
-    opco: 'GHOPO',
-    line_plant: 'INFRA GHOPO',
-    department: 'PACKING PLANT BANJARMASIN',
-    technical_group: 'DERMAGA',
+    opco: 'SBI NAROGONG',
+    line_plant: 'PLANT NAR 1',
+    department: 'RAW MEAL PREPARATION',
+    technical_group: 'RAW MATERIAL FEEDING',
   });
   const [actionNotice, setActionNotice] = useState<string | null>(null);
 
   useEffect(() => {
     if (initialFunlocFilter) {
       setFilterFunloc(initialFunlocFilter);
+      setShowSpecificFilters(true);
     }
   }, [initialFunlocFilter]);
+
+  useEffect(() => {
+    if (initialOpcoFilter) {
+      setFilterOpCo(initialOpcoFilter);
+      setShowSpecificFilters(true);
+    }
+  }, [initialOpcoFilter]);
+
+  useEffect(() => {
+    if (initialDepartmentFilter) {
+      setFilterDepartment(initialDepartmentFilter);
+      setShowSpecificFilters(true);
+    }
+  }, [initialDepartmentFilter]);
 
   // Reset to page 1 when search or any filter changes
   useEffect(() => {
@@ -150,58 +256,29 @@ export const FunlocDataView: React.FC<FunlocDataViewProps> = ({
     loadActivePageData();
   }, [loadActivePageData]);
 
-  // Dynamic filter dropdown options
+  // Dynamic filter dropdown options accurately grounded on Supabase
   const opcoOptions = useMemo(() => {
     const list = Array.from(new Set(data.map((d) => d.opco?.trim()).filter(Boolean)));
-    const defaults = ['GHOPO', 'SMBR', 'SBI TQ', 'SBI', 'SP', 'ST'];
-    return Array.from(new Set([...list, ...defaults])).filter((x) => x !== 'Semua' && x !== '-');
+    const defaults = OPCO_DATABASE_LIST;
+    return Array.from(new Set([...defaults, ...list])).filter((x) => x !== 'Semua' && x !== '-');
   }, [data]);
 
   const linePlantOptions = useMemo(() => {
     const list = Array.from(new Set(data.map((d) => d.line_plant?.trim()).filter(Boolean)));
-    const defaults = [
-      'INFRA GHOPO',
-      'BATURAJA 1',
-      'BATURAJA 2',
-      'PLANT TQ 1',
-      'PLANT TQ 2',
-      'TUBAN PLANT',
-      'GRESIK PLANT',
-      'PADANG PLANT',
-      'TONASA PLANT',
-    ];
-    return Array.from(new Set([...list, ...defaults])).filter((x) => x !== 'Semua' && x !== '-');
+    const defaults = LINE_PLANT_DATABASE_LIST;
+    return Array.from(new Set([...defaults, ...list])).filter((x) => x !== 'Semua' && x !== '-');
   }, [data]);
 
   const departmentOptions = useMemo(() => {
     const list = Array.from(new Set(data.map((d) => d.department?.trim()).filter(Boolean)));
-    const defaults = [
-      'PACKING PLANT BANJARMASIN',
-      'CEMENT PRODUCTION',
-      'UTILITIES & ELECTRICAL',
-      'RAW MEAL PREPARATION',
-      'GRINDING PLANT CIGADING',
-      'TUBAN PLANT',
-      'GRESIK PLANT',
-      'PADANG PLANT',
-      'TONASA PLANT',
-    ];
-    return Array.from(new Set([...list, ...defaults])).filter((x) => x !== 'Semua' && x !== '-');
+    const defaults = DEPARTMENT_DATABASE_LIST;
+    return Array.from(new Set([...defaults, ...list])).filter((x) => x !== 'Semua' && x !== '-');
   }, [data]);
 
   const techGroupOptions = useMemo(() => {
     const list = Array.from(new Set(data.map((d) => d.technical_group?.trim()).filter(Boolean)));
-    const defaults = [
-      'DERMAGA',
-      'SILO CEMENT',
-      'PACKING PLANT',
-      'RAW MATERIAL FEEDING',
-      'KILN & COAL MILL',
-      'RAW MILL',
-      'CRUSHER',
-      'UTILITY & INFRA',
-    ];
-    return Array.from(new Set([...list, ...defaults])).filter((x) => x !== 'Semua' && x !== '-');
+    const defaults = TECH_GROUP_DATABASE_LIST;
+    return Array.from(new Set([...defaults, ...list])).filter((x) => x !== 'Semua' && x !== '-');
   }, [data]);
 
   const activeFilterCount =
@@ -536,17 +613,17 @@ export const FunlocDataView: React.FC<FunlocDataViewProps> = ({
                   {/* 2. Filter OpCo */}
                   <div>
                     <label className="block text-[11px] font-bold text-[#454d59] mb-1">
-                      2. OpCo
+                      2. OpCo (Unit Bisnis SIG)
                     </label>
                     <select
                       value={filterOpCo}
                       onChange={(e) => setFilterOpCo(e.target.value)}
                       className="skeuo-inset-input w-full px-2.5 py-1.5 text-xs text-[#2a303a] font-semibold cursor-pointer bg-white"
                     >
-                      <option value="Semua">Semua OpCo</option>
+                      <option value="Semua">Semua OpCo (10 Unit Bisnis)</option>
                       {opcoOptions.map((o) => (
                         <option key={o} value={o}>
-                          {o}
+                          {OPCO_LABELS[o] ? `${o} · ${OPCO_LABELS[o]}` : o}
                         </option>
                       ))}
                     </select>
@@ -721,7 +798,10 @@ export const FunlocDataView: React.FC<FunlocDataViewProps> = ({
 
                           {/* OpCo (Dilebarkan) */}
                           <td className="py-2.5 px-4 text-center border-r border-[#dfe3e8] w-48 min-w-[170px]">
-                            <span className="inline-flex items-center justify-center min-w-[110px] px-3.5 py-1 rounded font-mono font-bold text-xs bg-[#eef1f5] text-[#2c333e] border border-[#cbd1d8] shadow-xs tracking-wider">
+                            <span
+                              className="inline-flex items-center justify-center min-w-[110px] px-3.5 py-1 rounded font-bold text-xs bg-[#eef1f5] text-[#2c333e] border border-[#cbd1d8] shadow-xs tracking-wider cursor-help"
+                              title={OPCO_LABELS[item.opco?.trim()] ? `${item.opco} · ${OPCO_LABELS[item.opco?.trim()]}` : item.opco}
+                            >
                               {item.opco}
                             </span>
                           </td>
@@ -972,7 +1052,12 @@ export const FunlocDataView: React.FC<FunlocDataViewProps> = ({
                 <div className="grid grid-cols-2 gap-2 text-xs">
                   <div className="p-2.5 bg-[#edf1f5] rounded border border-[#d2d7df]">
                     <span className="text-[#727a86] block text-[10px]">OpCo (Operating Company):</span>
-                    <strong className="font-mono text-[#242931]">{selectedDetail.opco}</strong>
+                    <strong className="text-[#242931]">{selectedDetail.opco}</strong>
+                    {OPCO_LABELS[selectedDetail.opco?.trim()] && (
+                      <span className="block text-[10px] text-[#596270] mt-0.5 font-normal">
+                        {OPCO_LABELS[selectedDetail.opco?.trim()]}
+                      </span>
+                    )}
                   </div>
                   <div className="p-2.5 bg-[#edf1f5] rounded border border-[#d2d7df]">
                     <span className="text-[#727a86] block text-[10px]">Line Plant:</span>

@@ -33,6 +33,8 @@ export default function App() {
 
   // Cross-navigation filter state
   const [funlocFilterFromCC, setFunlocFilterFromCC] = useState<string>('');
+  const [opcoFilterFromNav, setOpcoFilterFromNav] = useState<string>('Semua');
+  const [departmentFilterFromNav, setDepartmentFilterFromNav] = useState<string>('Semua');
 
   // Setting Modal State ("Untuk tombol yang berkaitan dengan supabase jadikan 1 tombol dengan judul 'Setting'")
   const [showSettingsModal, setShowSettingsModal] = useState(false);
@@ -160,7 +162,10 @@ export default function App() {
           <DashboardView
             totalFunlocCount={totalFunlocCount}
             totalCostCenterCount={costCenterCount}
-            onNavigate={(target) => {
+            onNavigate={(target, filter) => {
+              if (filter?.opco !== undefined) setOpcoFilterFromNav(filter.opco);
+              if (filter?.department !== undefined) setDepartmentFilterFromNav(filter.department);
+              if (filter?.funlocPrefix !== undefined) setFunlocFilterFromCC(filter.funlocPrefix);
               setActiveMenu(target);
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
@@ -182,16 +187,20 @@ export default function App() {
             isEditMode={isEditMode}
             onToggleEditMode={handleToggleEditMode}
             initialFunlocFilter={funlocFilterFromCC}
+            initialOpcoFilter={opcoFilterFromNav}
+            initialDepartmentFilter={departmentFilterFromNav}
           />
         )}
 
-        {/* Cost Center/Mapping View (Lampiran 2) */}
+        {/* Cost Center/Mapping View */}
         {activeMenu === 'costcenter' && (
           <CostCenterMappingView
             isEditMode={isEditMode}
             onToggleEditMode={handleToggleEditMode}
             onSwitchToFunlocWithFilter={(prefix) => {
               setFunlocFilterFromCC(prefix);
+              setOpcoFilterFromNav('Semua');
+              setDepartmentFilterFromNav('Semua');
               setActiveMenu('funcloc');
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}

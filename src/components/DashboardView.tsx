@@ -19,7 +19,10 @@ import { ActiveNavMenu } from './AppNavigationTabs.tsx';
 interface DashboardViewProps {
   totalFunlocCount: number;
   totalCostCenterCount: number;
-  onNavigate: (menu: ActiveNavMenu) => void;
+  onNavigate: (
+    menu: ActiveNavMenu,
+    filter?: { opco?: string; department?: string; funlocPrefix?: string }
+  ) => void;
   isEditMode: boolean;
   onToggleEditMode: () => void;
   onRefreshData: () => void;
@@ -35,24 +38,131 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   onRefreshData,
   isLoading,
 }) => {
-  // OpCo breakdown data
+  // OpCo breakdown data grounded on exact Supabase database counts (Total 150,322)
+  // SBI: Solusi Bangun Indonesia
   const opcoStats = [
-    { name: 'GHOPO', label: 'Gresik & Tuban Infra', count: 48620, pct: 32.3, color: 'bg-blue-600' },
-    { name: 'SMBR', label: 'Semen Baturaja (Pabrik 1 & 2)', count: 32410, pct: 21.6, color: 'bg-emerald-600' },
-    { name: 'SBI TQ', label: 'Semen Bangun Indonesia (TQ 1 & 2)', count: 28950, pct: 19.3, color: 'bg-amber-600' },
-    { name: 'SBI', label: 'Semen Bangun Indonesia (Cigading/Narogong)', count: 18230, pct: 12.1, color: 'bg-indigo-600' },
-    { name: 'SP', label: 'Semen Padang (Indarung V & VI)', count: 12560, pct: 8.4, color: 'bg-rose-600' },
-    { name: 'ST', label: 'Semen Tonasa (Pangkep & Biringkassi)', count: 9552, pct: 6.3, color: 'bg-teal-600' },
+    {
+      name: 'SBI NAROGONG',
+      label: 'Solusi Bangun Indonesia (Plant Narogong)',
+      count: 59117,
+      pct: 39.3,
+      color: 'bg-emerald-600',
+    },
+    {
+      name: 'SBI CILACAP',
+      label: 'Solusi Bangun Indonesia (Plant Cilacap)',
+      count: 31661,
+      pct: 21.1,
+      color: 'bg-blue-600',
+    },
+    {
+      name: 'SBI TQ',
+      label: 'Solusi Bangun Indonesia (Tuban Quarry)',
+      count: 22515,
+      pct: 15.0,
+      color: 'bg-amber-600',
+    },
+    {
+      name: 'GHOPO',
+      label: 'Group Head of Plant Operation (Gresik & Tuban)',
+      count: 12928,
+      pct: 8.6,
+      color: 'bg-indigo-600',
+    },
+    {
+      name: 'SBA LHOKNGA',
+      label: 'Solusi Bangun Andalas (Plant Lhoknga)',
+      count: 9403,
+      pct: 6.3,
+      color: 'bg-teal-600',
+    },
+    {
+      name: 'ST',
+      label: 'PT Semen Tonasa (Pangkep & Biringkassi)',
+      count: 7966,
+      pct: 5.3,
+      color: 'bg-cyan-600',
+    },
+    {
+      name: 'SP',
+      label: 'PT Semen Padang (Indarung)',
+      count: 4444,
+      pct: 3.0,
+      color: 'bg-rose-600',
+    },
+    {
+      name: 'SG',
+      label: 'PT Semen Gresik (Pabrik Rembang)',
+      count: 1260,
+      pct: 0.8,
+      color: 'bg-purple-600',
+    },
+    {
+      name: 'TLCC',
+      label: 'Thang Long Cement Company (Vietnam)',
+      count: 869,
+      pct: 0.6,
+      color: 'bg-violet-600',
+    },
+    {
+      name: 'SMBR',
+      label: 'PT Semen Baturaja Tbk (Pabrik Baturaja)',
+      count: 159,
+      pct: 0.1,
+      color: 'bg-slate-600',
+    },
   ];
 
-  // Technical Group breakdown
+  // Departmen & Technical Clusters grounded on real database counts
   const techGroupStats = [
-    { name: 'DERMAGA & JETTY', count: 18450, icon: Factory },
-    { name: 'SILO CEMENT & BULK', count: 24200, icon: Server },
-    { name: 'PACKING PLANT & LOADER', count: 31280, icon: Building2 },
-    { name: 'KILN & COAL MILL', count: 38940, icon: Wrench },
-    { name: 'RAW MILL & CRUSHER', count: 22890, icon: Factory },
-    { name: 'UTILITIES & ELECTRICAL', count: 14562, icon: ShieldCheck },
+    {
+      name: 'CLINKER PRODUCTION',
+      label: 'Pyroprocess, Kiln Feed, Clinker Conveying & Coal',
+      count: 34871,
+      pct: 23.2,
+      icon: Wrench,
+      color: 'bg-amber-600',
+    },
+    {
+      name: 'CEMENT PRODUCTION',
+      label: 'Cement Grinding Mill, Additives & Cement Transport',
+      count: 23854,
+      pct: 15.9,
+      icon: Server,
+      color: 'bg-indigo-600',
+    },
+    {
+      name: 'CEMENT PACKING & SHIPPING',
+      label: 'Rotary Packer, Silo Cement, Bulk Loader & Port',
+      count: 23734,
+      pct: 15.8,
+      icon: Building2,
+      color: 'bg-orange-600',
+    },
+    {
+      name: 'TAMBANG',
+      label: 'Limestone Crushing, Clay Crushing & Quarry Fleet',
+      count: 17055,
+      pct: 11.3,
+      icon: Factory,
+      color: 'bg-blue-600',
+    },
+    {
+      name: 'RAW MEAL PREPARATION',
+      label: 'Raw Material Feeding, Reclaim, Raw Mill & Transport',
+      count: 15699,
+      pct: 10.4,
+      icon: Factory,
+      color: 'bg-emerald-600',
+    },
+    {
+      name: 'UTILITIES & ELECTRICAL',
+      label: 'Power Plant, Substation, PLTU AB, WHRPG & Kompresor',
+      count: 12515,
+      pct: 8.3,
+      icon: ShieldCheck,
+      color: 'bg-teal-600',
+    },
   ];
 
   return (
@@ -74,6 +184,65 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 </p>
               </div>
             </div>
+
+            {/* Live Status Indicator */}
+            <div className="flex items-center gap-2">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-300 shadow-xs">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span>150.322 Data Aktif</span>
+              </span>
+            </div>
+          </div>
+
+          {/* KPI Summary Tiles */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 pt-3.5 pb-2">
+            <div className="p-3 bg-white rounded-lg border border-[#c2c8d2] shadow-xs">
+              <span className="text-[10.5px] uppercase font-bold text-[#727a87] tracking-wider block">
+                Total Master Funloc
+              </span>
+              <div className="text-lg sm:text-xl font-extrabold text-[#1f252f] mt-0.5">
+                {totalFunlocCount.toLocaleString('id-ID')}
+              </div>
+              <span className="text-[10px] text-emerald-700 font-medium">
+                100% Terintegrasi Supabase
+              </span>
+            </div>
+
+            <div className="p-3 bg-white rounded-lg border border-[#c2c8d2] shadow-xs">
+              <span className="text-[10.5px] uppercase font-bold text-[#727a87] tracking-wider block">
+                Operating Companies
+              </span>
+              <div className="text-lg sm:text-xl font-extrabold text-[#1f252f] mt-0.5">
+                10 OpCo
+              </div>
+              <span className="text-[10px] text-[#636c79] font-medium">
+                SBI, SBA, GHOPO, ST, SP, SG, TLCC, SMBR
+              </span>
+            </div>
+
+            <div className="p-3 bg-white rounded-lg border border-[#c2c8d2] shadow-xs">
+              <span className="text-[10.5px] uppercase font-bold text-[#727a87] tracking-wider block">
+                Departemen Pabrik
+              </span>
+              <div className="text-lg sm:text-xl font-extrabold text-[#1f252f] mt-0.5">
+                12 Departemen
+              </div>
+              <span className="text-[10px] text-[#636c79] font-medium">
+                Clinker, Semen, Packing, Tambang, dll
+              </span>
+            </div>
+
+            <div className="p-3 bg-white rounded-lg border border-[#c2c8d2] shadow-xs">
+              <span className="text-[10.5px] uppercase font-bold text-[#727a87] tracking-wider block">
+                Mapping Cost Center CO
+              </span>
+              <div className="text-lg sm:text-xl font-extrabold text-[#1f252f] mt-0.5">
+                {totalCostCenterCount} Klaster
+              </div>
+              <span className="text-[10px] text-blue-700 font-medium">
+                Standardisasi Master Data SIG
+              </span>
+            </div>
           </div>
 
           {/* Quick Navigational Launchpads (Jalan Pintas ke Menu 2 & Menu 3) */}
@@ -94,7 +263,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                       <ArrowRight className="w-3.5 h-3.5 text-emerald-700 group-hover:translate-x-1 transition-transform" />
                     </h4>
                     <p className="text-[11px] text-[#6b7582]">
-                      Jelajahi dan filter seluruh data Functional Location dengan filter bertingkat dan pencarian global.
+                      Jelajahi dan filter seluruh 150.322 data Functional Location dengan filter bertingkat OpCo, Line Plant, Departemen, dan Technical Group.
                     </p>
                   </div>
                 </div>
@@ -117,7 +286,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                       <ArrowRight className="w-3.5 h-3.5 text-blue-700 group-hover:translate-x-1 transition-transform" />
                     </h4>
                     <p className="text-[11px] text-[#6b7582]">
-                      Kelola pemetaan pusat biaya SAP CO terhadap aset Funloc, ubah data secara langsung, dan tambahkan mapping baru.
+                      Kelola pemetaan pusat biaya SAP CO terhadap aset Funloc, ubah data secara langsung, dan alokasikan kode aktivitas standar.
                     </p>
                   </div>
                 </div>
@@ -140,30 +309,37 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                     Distribusi Funloc per Operating Company (OpCo)
                   </h3>
                 </div>
-                <span className="text-[10.5px] text-[#6e7784] font-mono">
-                  Total 150.322
+                <span className="text-[10.5px] text-[#6e7784]">
+                  Total 150.322 Data
                 </span>
               </div>
 
-              <div className="my-4 space-y-3">
+              <div className="my-3 space-y-2.5">
                 {opcoStats.map((item) => (
-                  <div key={item.name} className="space-y-1">
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="font-bold font-mono text-[#242a33]">
-                        {item.name}{' '}
-                        <span className="font-normal font-sans text-[11px] text-[#6d7683]">
+                  <div
+                    key={item.name}
+                    onClick={() => onNavigate('funcloc', { opco: item.name })}
+                    className="p-1.5 -mx-1.5 rounded hover:bg-black/5 transition-colors cursor-pointer group"
+                    title={`Klik untuk melihat data ${item.name} di tabel Funloc SIG`}
+                  >
+                    <div className="flex items-center justify-between text-xs mb-1">
+                      <div className="flex items-center gap-1.5 min-w-0">
+                        <span className="font-bold text-[#242a33] group-hover:text-emerald-800 transition-colors">
+                          {item.name}
+                        </span>
+                        <span className="font-normal text-[11px] text-[#6d7683] truncate">
                           ({item.label})
                         </span>
-                      </span>
-                      <span className="font-mono text-[11.5px] text-[#333a44] font-semibold">
+                      </div>
+                      <span className="text-[11.5px] text-[#333a44] font-semibold shrink-0 ml-2">
                         {item.count.toLocaleString('id-ID')} ({item.pct}%)
                       </span>
                     </div>
                     {/* Progress Bar with Bevel */}
-                    <div className="w-full h-2.5 rounded-full bg-[#dbe0e7] overflow-hidden p-0.5 border border-[#c1c8d2] shadow-inner">
+                    <div className="w-full h-2 rounded-full bg-[#dbe0e7] overflow-hidden p-0.5 border border-[#c1c8d2] shadow-inner">
                       <div
                         className={`h-full rounded-full ${item.color} shadow-xs transition-all duration-500`}
-                        style={{ width: `${item.pct * 1.8}%` }}
+                        style={{ width: `${Math.min(100, item.pct * 2.5)}%` }}
                       />
                     </div>
                   </div>
@@ -172,7 +348,9 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             </div>
 
             <div className="pt-2 border-t border-[#cbd1d8] text-[11px] text-[#6d7684] flex items-center justify-between">
-              <span>Sumber Data: Master Tabel SAP PM</span>
+              <span className="text-[10.5px] text-[#717b87]">
+                Klik OpCo di atas untuk filter langsung ke Funloc
+              </span>
               <button
                 onClick={() => onNavigate('funcloc')}
                 className="text-emerald-800 font-bold hover:underline cursor-pointer"
@@ -191,52 +369,65 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 <div className="flex items-center gap-2">
                   <Wrench className="w-4 h-4 text-[#3c4451]" />
                   <h3 className="text-xs sm:text-sm font-bold text-[#252c36]">
-                    Kelompok Teknis Peralatan (Technical Group)
+                    Klaster Departemen & Unit Kerja Utama
                   </h3>
                 </div>
-                <span className="text-[10.5px] text-[#6e7784] font-mono">
-                  6 Klaster Utama
+                <span className="text-[10.5px] text-[#6e7784]">
+                  6 Klaster Terbesar
                 </span>
               </div>
 
-              <div className="grid grid-cols-2 gap-2.5 my-4">
+              <div className="my-3 space-y-2.5">
                 {techGroupStats.map((tg) => {
                   const Icon = tg.icon;
                   return (
                     <div
                       key={tg.name}
-                      className="p-2.5 bg-white/70 rounded-md border border-[#ccd2da] flex items-center gap-2.5 shadow-xs"
+                      onClick={() => onNavigate('funcloc', { department: tg.name })}
+                      className="p-2.5 bg-white/80 rounded-md border border-[#ccd2da] hover:border-[#8e98a6] hover:bg-white shadow-xs cursor-pointer group transition-all"
+                      title={`Klik untuk filter departemen ${tg.name} di tabel Funloc SIG`}
                     >
-                      <div className="p-1.5 rounded bg-[#ebf0f6] text-[#3b434e] border border-[#cbd2db]">
-                        <Icon className="w-3.5 h-3.5" />
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <div className="p-1.5 rounded bg-[#ebf0f6] text-[#3b434e] border border-[#cbd2db] shrink-0">
+                            <Icon className="w-3.5 h-3.5" />
+                          </div>
+                          <div className="min-w-0">
+                            <div className="text-[11.5px] font-bold text-[#272e38] group-hover:text-blue-800 transition-colors truncate">
+                              {tg.name}
+                            </div>
+                            <div className="text-[10.5px] text-[#656e7b] truncate">
+                              {tg.label}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="text-right shrink-0 ml-3">
+                          <div className="text-xs font-bold text-[#242b35]">
+                            {tg.count.toLocaleString('id-ID')} unit
+                          </div>
+                          <div className="text-[10px] text-[#717a86]">
+                            {tg.pct}% total aset
+                          </div>
+                        </div>
                       </div>
-                      <div className="min-w-0">
-                        <div className="text-[10.5px] font-bold text-[#272e38] truncate">
-                          {tg.name}
-                        </div>
-                        <div className="text-[11px] font-mono text-[#5b6472] font-semibold">
-                          ~{tg.count.toLocaleString('id-ID')} unit
-                        </div>
+
+                      <div className="w-full h-1.5 rounded-full bg-[#e3e7ed] overflow-hidden mt-2">
+                        <div
+                          className={`h-full rounded-full ${tg.color}`}
+                          style={{ width: `${tg.pct * 3.5}%` }}
+                        />
                       </div>
                     </div>
                   );
                 })}
               </div>
-
-              {/* SAP Integration Notice Box */}
-              <div className="p-3 bg-gradient-to-r from-[#eef2f7] to-[#e4e9f0] rounded-md border border-[#c6cdd7] text-xs text-[#444c57] space-y-1">
-                <div className="font-bold text-[#272e38] flex items-center gap-1.5">
-                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-700" />
-                  <span>Petunjuk Pemeliharaan Master Data (SOP):</span>
-                </div>
-                <p className="text-[11px] text-[#636c79] leading-relaxed">
-                  Semua Functional Location harus terikat pada Cost Center aktif. Gunakan menu <strong>Mode Edit di atas</strong> untuk memutakhirkan data, memperbarui penomoran hierarki SAP PM, atau mengalokasikan pusat biaya baru.
-                </p>
-              </div>
             </div>
 
             <div className="pt-2 border-t border-[#cbd1d8] text-[11px] text-[#6d7684] flex items-center justify-between">
-              <span>SOP Standar: SIG-PM-SOP-004</span>
+              <span className="text-[10.5px] text-[#717b87]">
+                Klik klaster di atas untuk filter langsung ke Funloc
+              </span>
               <button
                 onClick={() => onNavigate('costcenter')}
                 className="text-blue-800 font-bold hover:underline cursor-pointer"

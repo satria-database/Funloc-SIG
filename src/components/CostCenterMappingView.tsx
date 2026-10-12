@@ -233,7 +233,7 @@ export const CostCenterMappingView: React.FC<CostCenterMappingViewProps> = () =>
               </div>
               <div>
                 <h3 className="text-base sm:text-lg font-bold text-[#2d343f] tracking-tight">
-                  Cost Center / Mapping (Lampiran 2)
+                  Cost Center / Mapping
                 </h3>
                 <p className="text-xs text-[#6e7784] mt-0.5">
                   Tabel Pemetaan Master Data Departemen, Line/Plant, dan Aktivitas (SIG · Technical Group · GHOPO)
