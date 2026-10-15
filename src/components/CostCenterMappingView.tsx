@@ -5,7 +5,7 @@ import {
   saveLocalCostCenterMapping,
   addDepartmentRow,
   deleteDepartmentRow,
-} from '../data/costCenterData.ts';
+} from '../data/costCenterData';
 import {
   PlusCircle,
   Pencil,
@@ -99,8 +99,8 @@ export const CostCenterMappingView: React.FC<CostCenterMappingViewProps> = () =>
     if (unifiedModal.actIndex !== undefined && unifiedModal.actIndex >= 0) {
       // Edit Aktivitas yang ada
       if (dept.sigActivities[unifiedModal.actIndex]) {
-        dept.sigActivities[unifiedModal.actIndex].code = unifiedModal.sigCode.trim();
-        dept.sigActivities[unifiedModal.actIndex].description = unifiedModal.sigDesc.trim().toUpperCase();
+        dept.sigActivities[unifiedModal.actIndex]!.code = unifiedModal.sigCode.trim();
+        dept.sigActivities[unifiedModal.actIndex]!.description = unifiedModal.sigDesc.trim().toUpperCase();
       }
       if (!dept.techGroupActivities[unifiedModal.actIndex]) {
         dept.techGroupActivities[unifiedModal.actIndex] = {
@@ -109,8 +109,8 @@ export const CostCenterMappingView: React.FC<CostCenterMappingViewProps> = () =>
           description: unifiedModal.tgDesc.trim().toUpperCase(),
         };
       } else {
-        dept.techGroupActivities[unifiedModal.actIndex].code = unifiedModal.tgCode.trim();
-        dept.techGroupActivities[unifiedModal.actIndex].description = unifiedModal.tgDesc.trim().toUpperCase();
+        dept.techGroupActivities[unifiedModal.actIndex]!.code = unifiedModal.tgCode.trim();
+        dept.techGroupActivities[unifiedModal.actIndex]!.description = unifiedModal.tgDesc.trim().toUpperCase();
       }
       if (!dept.ghopoActivities[unifiedModal.actIndex]) {
         dept.ghopoActivities[unifiedModal.actIndex] = {
@@ -119,7 +119,7 @@ export const CostCenterMappingView: React.FC<CostCenterMappingViewProps> = () =>
           description: '',
         };
       } else {
-        dept.ghopoActivities[unifiedModal.actIndex].code = unifiedModal.ghopoCode.trim() || '-';
+        dept.ghopoActivities[unifiedModal.actIndex]!.code = unifiedModal.ghopoCode.trim() || '-';
       }
       showToast(`Data departemen & aktivitas baris berhasil diperbarui!`);
     } else {

@@ -14,7 +14,7 @@ import {
   RefreshCw,
   Server,
 } from 'lucide-react';
-import { ActiveNavMenu } from './AppNavigationTabs.tsx';
+import { ActiveNavMenu } from './AppNavigationTabs';
 
 interface DashboardViewProps {
   totalFunlocCount: number;
