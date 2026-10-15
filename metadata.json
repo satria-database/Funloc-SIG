@@ -1,6 +1,0 @@
-{
-  "name": "FUNLOC SIG",
-  "description": "Portal Data Master Functional Location (PM) & Cost Center (CO) PT Semen Indonesia (Persero) Tbk",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}

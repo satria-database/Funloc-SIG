@@ -241,8 +241,11 @@ export function updateDepartmentRow(
   const current = getLocalCostCenterMapping();
   const index = current.findIndex((d) => d.id === id);
   if (index !== -1) {
-    current[index] = { ...current[index], ...updated };
-    saveLocalCostCenterMapping(current);
+    const existing = current[index];
+    if (existing) {
+      current[index] = { ...existing, ...updated } as CostCenterActivityRow;
+      saveLocalCostCenterMapping(current);
+    }
   }
   return current;
 }

@@ -5,7 +5,7 @@ import {
   updateFunlocRecord,
   fetchFunlocPage,
   KNOWN_DATABASE_TOTAL,
-} from '../lib/supabase.ts';
+} from '../lib/supabase';
 import {
   Search,
   Database,

@@ -319,14 +319,14 @@ export async function fetchFunlocPage(
   const numMatch = rawSearch.replace(/^#/, '').match(/^(\d+)$/);
   const isDirectRowNum =
     numMatch !== null &&
-    parseInt(numMatch[1], 10) >= 1 &&
-    parseInt(numMatch[1], 10) <= KNOWN_DATABASE_TOTAL;
-  const targetRowNum = isDirectRowNum ? parseInt(numMatch[1], 10) : null;
+    parseInt(numMatch[1]!, 10) >= 1 &&
+    parseInt(numMatch[1]!, 10) <= KNOWN_DATABASE_TOTAL;
+  const targetRowNum = isDirectRowNum ? parseInt(numMatch[1]!, 10) : null;
 
   if (!client) {
     if (isDirectRowNum && targetRowNum) {
       const isLastRow = targetRowNum === 150322;
-      const sample = fallbackData[(targetRowNum - 1) % fallbackData.length];
+      const sample = fallbackData[(targetRowNum - 1) % fallbackData.length]!;
       const directRow: FunlocRecord = isLastRow
         ? {
             id: 'row-150322',
@@ -369,7 +369,7 @@ export async function fetchFunlocPage(
           technical_group: 'RAW MATERIAL FEEDING',
         };
       }
-      const sample = fallbackData[(startIdx + i) % fallbackData.length];
+      const sample = fallbackData[(startIdx + i) % fallbackData.length]!;
       return {
         ...sample,
         id: `row-${seq}`,
@@ -505,7 +505,7 @@ export async function fetchFunlocPage(
         technical_group: 'RAW MATERIAL FEEDING',
       };
     }
-    const sample = fallbackData[(startIdx + i) % fallbackData.length];
+    const sample = fallbackData[(startIdx + i) % fallbackData.length]!;
     return {
       ...sample,
       id: `row-${seq}`,
@@ -528,7 +528,7 @@ export async function fetchFunlocPage(
 
 export async function fetchLiveSupabaseData(
   overrideConfig?: SupabaseConfig
-): Promise<{ success: boolean; data: FunlocRecord[]; error?: string; count?: number }> {
+): Promise<{ success: boolean; data: FunlocRecord[]; error?: string | undefined; count?: number | undefined }> {
   const result = await fetchFunlocPage({ page: 1, pageSize: 50 }, overrideConfig);
   return {
     success: result.success,
@@ -684,8 +684,11 @@ export async function updateFunlocRecord(
   const currentList = getLocalFunlocData();
   const idx = currentList.findIndex((item) => item.functional_location === originalFunlocCode);
   if (idx !== -1) {
-    currentList[idx] = { ...currentList[idx], ...updatedData };
-    saveLocalFunlocData(currentList);
+    const existing = currentList[idx];
+    if (existing) {
+      currentList[idx] = { ...existing, ...updatedData } as FunlocRecord;
+      saveLocalFunlocData(currentList);
+    }
   }
 
   // 3. Attempt update on Supabase table

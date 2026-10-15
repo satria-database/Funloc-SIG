@@ -16,7 +16,7 @@ import {
   SupabaseConfig,
   DEFAULT_SUPABASE_URL,
   DEFAULT_SUPABASE_TABLE,
-} from '../lib/supabase.ts';
+} from '../lib/supabase';
 
 interface SettingsModalProps {
   isOpen: boolean;
